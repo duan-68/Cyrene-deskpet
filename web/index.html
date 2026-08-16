@@ -919,6 +919,11 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   85%{transform:translateY(-3px) scale(1);opacity:.6}
   100%{transform:translateY(0) scale(.95);opacity:0}
 }
+.dizzyEye{position:fixed;z-index:250;width:22px;height:22px;pointer-events:none;
+  border-radius:50%;transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg, transparent 0deg, #ff9ecf 90deg, transparent 180deg, #ff9ecf 270deg, transparent 360deg);
+  animation:dizzySpin .7s linear infinite}
+@keyframes dizzySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 </style>
 <script>
 (function(){
@@ -1016,6 +1021,20 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   // ---- 拖拽 ----
   var dragging=false, overPet=false, dragOff={x:0,y:0};
   var dragLastX=0, dragLastY=0, dragLastT=0, dizzyCooldown=0;
+  function spawnDizzyEyes(){
+    var r=canvas.getBoundingClientRect();
+    var cx=r.left+r.width/2;
+    var ey=r.top+r.height*0.22;
+    var dx=r.width*0.12;
+    for(var i=0;i<2;i++){
+      var eye=document.createElement('div');
+      eye.className='dizzyEye';
+      eye.style.left=(cx+(i===0?-dx:dx))+'px';
+      eye.style.top=ey+'px';
+      document.body.appendChild(eye);
+      setTimeout(function(){eye.remove();},2200);
+    }
+  }
   function overPetAt(mx,my){
     var r=canvas.getBoundingClientRect();
     return mx>=r.left&&mx<=r.right&&my>=r.top&&my<=r.bottom;
@@ -1032,9 +1051,10 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       if(dt>0.01){
         var dx=e.clientX-dragLastX, dy=e.clientY-dragLastY;
         var speed=Math.sqrt(dx*dx+dy*dy)/dt;
-        if(speed>1500 && now>dizzyCooldown){
+        if(speed>900 && now>dizzyCooldown){
           dizzyCooldown=now+3000;
           if(window.__setDizzy)window.__setDizzy(2200);
+          spawnDizzyEyes();
         }
         dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=now;
       }
