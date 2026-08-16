@@ -23,11 +23,11 @@
 
   var SLOTS = {
     'back hair':   { depth: 0.55, group: 'head', phys: 'hair' },
-    'bottomwear':  { depth: 0.88, group: 'body' },
-    'legwear':     { depth: 0.85, group: 'body' },
+    'bottomwear':  { depth: 0.56, group: 'body' },
+    'legwear':     { depth: 0.60, group: 'body' },
     'neck':        { depth: 0.95, group: 'body' },
     'topwear':     { depth: 0.90, group: 'body' },
-    'handwear':    { depth: 0.84, group: 'body' },
+    'handwear':    { depth: 0.60, group: 'body' },
     'earwear':     { depth: 0.97, group: 'head' },
     'ears':        { depth: 0.96, group: 'head' },
     'face':        { depth: 1.00, group: 'head' },
@@ -518,6 +518,8 @@
         warnings.push('mouth_close が無いため汎用閉じ口を自動配置しました（「口」のバーで調整可）');
       }
     }
+    // 按 depth 排序（depth 大=靠前，后渲染）
+    parts.sort(function (a, b) { return a.depth - b.depth; });
     for (var zi = 0; zi < parts.length; zi++) parts[zi].z = zi;
 
     return { canvas: { w: W, h: H }, layers: parts, anchors: anchors, warnings: warnings, synth: synth };
