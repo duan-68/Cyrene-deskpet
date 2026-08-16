@@ -1056,7 +1056,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       n.style.cssText='position:fixed;z-index:300;font-size:'+(20+(i%2)*6)+'px;color:#ff9ecf;pointer-events:none;text-shadow:0 0 6px rgba(255,158,207,.9);';
       n.style.left=(cx+pos.x)+'px';
       n.style.top=(cy+pos.y)+'px';
-      n.style.animation='noteFloat 2.6s ease-in-out '+(i*0.25)+'s forwards';
+      n.style.animation='noteFloat 2.6s ease-in-out '+(i*0.25)+'s both';
       document.body.appendChild(n);
       setTimeout(function(){n.remove();},3000);
     }
