@@ -1028,22 +1028,41 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   });
 
   // ---- 投喂 ----
+  var FOODS=['🍎','🍪','🍬','🍩','🍭','🧁','🍫','🍓'];
   function feed(){
     var r=canvas.getBoundingClientRect();
-    var food=document.createElement('div');
-    food.textContent='🍎';
-    food.style.cssText='position:fixed;z-index:300;font-size:30px;pointer-events:none;transition:all .9s cubic-bezier(.3,0,.7,1);';
-    food.style.left=(r.left+r.width/2-15)+'px';
-    food.style.top=(r.top-50)+'px';
-    food.style.opacity='1';
-    document.body.appendChild(food);
-    requestAnimationFrame(function(){
-      food.style.top=(r.top+r.height*0.45)+'px';
-      food.style.transform='scale(.2) rotate(180deg)';
-      food.style.opacity='0';
-    });
-    setTimeout(function(){food.remove();},950);
+    var cx=r.left+r.width/2;
+    var cy=r.top+r.height*0.4;
+    for(var i=0;i<14;i++){
+      (function(i){
+        setTimeout(function(){
+          var food=document.createElement('div');
+          food.textContent=FOODS[Math.floor(Math.random()*FOODS.length)];
+          food.style.cssText='position:fixed;z-index:300;font-size:'+(20+Math.random()*16)+'px;pointer-events:none;transition:all 1.1s cubic-bezier(.4,0,.6,1);';
+          food.style.left=(cx+(Math.random()*200-100))+'px';
+          food.style.top='-60px';
+          food.style.opacity='1';
+          document.body.appendChild(food);
+          requestAnimationFrame(function(){
+            food.style.top=(cy+Math.random()*30)+'px';
+            food.style.transform='rotate('+(Math.random()*360-180)+'deg)';
+          });
+          setTimeout(function(){
+            food.style.opacity='0';
+            food.style.transform+=' scale(.3)';
+            setTimeout(function(){food.remove();},300);
+          },1050);
+        },i*90);
+      })(i);
+    }
   }
+  // 右键桌宠投喂
+  window.addEventListener('contextmenu',function(e){
+    if(overPetAt(e.clientX,e.clientY)){
+      e.preventDefault();
+      feed();
+    }
+  });
   if(window.petAPI)window.petAPI.onFeed(feed);
 })();
 </script>
