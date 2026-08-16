@@ -6,7 +6,7 @@ const fs = require('fs');
 const WEB_DIR = path.join(__dirname, '..', 'web');
 
 ipcMain.handle('get-sample-psd', () => {
-  return fs.readFileSync(path.join(WEB_DIR, 'sample.psd'));
+  return fs.readFileSync(path.join(WEB_DIR, 'pet.psd'));
 });
 ipcMain.handle('read-psd', (e, absPath) => {
   return fs.readFileSync(absPath);
