@@ -919,9 +919,9 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   85%{transform:translateY(-3px) scale(1);opacity:.6}
   100%{transform:translateY(0) scale(.95);opacity:0}
 }
-.dizzyEye{position:absolute;z-index:250;width:22px;height:22px;pointer-events:none;
-  border-radius:50%;transform:translate(-50%,-50%);
-  background:conic-gradient(from 0deg, transparent 0deg, #1a1a1a 90deg, transparent 180deg, #1a1a1a 270deg, transparent 360deg);
+.dizzyEye{position:absolute;z-index:250;width:26px;height:22px;pointer-events:none;
+  transform:translate(-50%,-50%);
+  background:url(dizzy.png) center/contain no-repeat;
   animation:dizzySpin .7s linear infinite}
 @keyframes dizzySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 </style>
