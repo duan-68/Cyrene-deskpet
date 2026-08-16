@@ -908,7 +908,7 @@ body.pet-mode #stage,body.pet-mode #stage.checker{
   background:transparent!important;
   position:absolute;inset:0;width:100vw;height:100vh;
 }
-body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointer-events:none}
+body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;pointer-events:none}
 #petIcon{position:fixed;display:none;width:48px;height:48px;z-index:200;pointer-events:none;
   background:transparent;background-size:cover;background-position:center;
   align-items:center;justify-content:center;font-size:32px}
@@ -919,9 +919,9 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   85%{transform:translateY(-3px) scale(1);opacity:.6}
   100%{transform:translateY(0) scale(.95);opacity:0}
 }
-.dizzyEye{position:fixed;z-index:250;width:22px;height:22px;pointer-events:none;
+.dizzyEye{position:absolute;z-index:250;width:22px;height:22px;pointer-events:none;
   border-radius:50%;transform:translate(-50%,-50%);
-  background:conic-gradient(from 0deg, transparent 0deg, #ff9ecf 90deg, transparent 180deg, #ff9ecf 270deg, transparent 360deg);
+  background:conic-gradient(from 0deg, transparent 0deg, #1a1a1a 90deg, transparent 180deg, #1a1a1a 270deg, transparent 360deg);
   animation:dizzySpin .7s linear infinite}
 @keyframes dizzySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 </style>
@@ -930,19 +930,25 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   if(!location.search.includes('pet=1'))return;
   document.body.classList.add('pet-mode');
   var canvas=document.getElementById('cv');
+  var HOME={x:0.5,y:0.72};
+  var PET_SIZE=180;
+  var holder=document.createElement('div');
+  holder.style.cssText='position:fixed;left:0;top:0;width:'+PET_SIZE+'px;height:'+PET_SIZE+'px;z-index:150;pointer-events:none;';
+  canvas.parentNode.appendChild(holder);
+  holder.appendChild(canvas);
   var icon=document.createElement('div');
   icon.id='petIcon';icon.textContent='📦';
   document.body.appendChild(icon);
-  var HOME={x:0.5,y:0.72};
-  var PET_SIZE=180;
   var busy=false;
 
   function resetPet(){
-    canvas.style.transition='none';
+    holder.style.transition='none';
+    holder.style.width=PET_SIZE+'px';
+    holder.style.height=PET_SIZE+'px';
     canvas.style.width=PET_SIZE+'px';
     canvas.style.height=PET_SIZE+'px';
-    canvas.style.left=(window.innerWidth*HOME.x-PET_SIZE/2)+'px';
-    canvas.style.top=(window.innerHeight*HOME.y-PET_SIZE/2)+'px';
+    holder.style.left=(window.innerWidth*HOME.x-PET_SIZE/2)+'px';
+    holder.style.top=(window.innerHeight*HOME.y-PET_SIZE/2)+'px';
   }
 
   function animateDelete(msg){
@@ -962,9 +968,9 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
     icon.style.left=(x-20)+'px';icon.style.top=(y-20)+'px';
     icon.style.transform='scale(1) rotate(0)';icon.style.opacity='1';
     // 2. 角色移动到图标旁
-    canvas.style.transition='left .8s cubic-bezier(.4,0,.2,1),top .8s cubic-bezier(.4,0,.2,1)';
-    canvas.style.left=(x-70-r.width/2)+'px';
-    canvas.style.top=(y-r.height/2+40)+'px';
+    holder.style.transition='left .8s cubic-bezier(.4,0,.2,1),top .8s cubic-bezier(.4,0,.2,1)';
+    holder.style.left=(x-70-r.width/2)+'px';
+    holder.style.top=(y-r.height/2+40)+'px';
     // 3. 扔垃圾桶（图标飞向回收站）
     setTimeout(function(){
       icon.style.transition='all .5s cubic-bezier(.5,0,.8,.4)';
@@ -1022,16 +1028,14 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   var dragging=false, overPet=false, dragOff={x:0,y:0};
   var dragLastX=0, dragLastY=0, dragLastT=0, dizzyCooldown=0;
   function spawnDizzyEyes(){
-    var r=canvas.getBoundingClientRect();
-    var cx=r.left+r.width/2;
-    var ey=r.top+r.height*0.22;
-    var dx=r.width*0.12;
+    var dx=PET_SIZE*0.12;
+    var ey=PET_SIZE*0.22;
     for(var i=0;i<2;i++){
       var eye=document.createElement('div');
       eye.className='dizzyEye';
-      eye.style.left=(cx+(i===0?-dx:dx))+'px';
+      eye.style.left=(PET_SIZE/2+(i===0?-dx:dx))+'px';
       eye.style.top=ey+'px';
-      document.body.appendChild(eye);
+      holder.appendChild(eye);
       setTimeout(function(){eye.remove();},2200);
     }
   }
@@ -1058,9 +1062,9 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
         }
         dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=now;
       }
-      canvas.style.transition='none';
-      canvas.style.left=(e.clientX-dragOff.x)+'px';
-      canvas.style.top=(e.clientY-dragOff.y)+'px';
+      holder.style.transition='none';
+      holder.style.left=(e.clientX-dragOff.x)+'px';
+      holder.style.top=(e.clientY-dragOff.y)+'px';
     }
   });
   window.addEventListener('mousedown',function(e){
@@ -1069,7 +1073,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       var r=canvas.getBoundingClientRect();
       dragOff={x:e.clientX-r.left,y:e.clientY-r.top};
       dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=performance.now();
-      canvas.style.transition='none';
+      holder.style.transition='none';
     }
   });
   window.addEventListener('mouseup',function(){
