@@ -11,6 +11,9 @@ ipcMain.handle('get-sample-psd', () => {
 ipcMain.handle('read-psd', (e, absPath) => {
   return fs.readFileSync(absPath);
 });
+ipcMain.handle('set-ignore-mouse', (e, ignore) => {
+  if (win) win.setIgnoreMouseEvents(ignore, { forward: true });
+});
 
 let pythonProc = null;
 let tray = null;
@@ -18,6 +21,9 @@ let tray = null;
 function createTray() {
   tray = new Tray(path.join(__dirname, 'tray.png'));
   const menu = Menu.buildFromTemplate([
+    { label: '投喂', click: () => {
+        if (win) win.webContents.send('feed');
+    }},
     { label: '暂停监控', type: 'checkbox', click: (item) => {
         if (win) win.webContents.send('set-paused', item.checked);
     }},
