@@ -10,6 +10,7 @@ def test_generate_frames_produces_expected_set(tmp_path):
     names = sorted(os.path.basename(p) for p in paths)
     assert names == sorted(
         ["idle_01.png", "idle_02.png", "idle_03.png", "idle_04.png",
+         "idle_05.png", "idle_06.png", "idle_07.png", "idle_08.png",
          "move_01.png", "move_02.png", "move_03.png", "move_04.png",
          "act_01.png", "act_02.png"])
 

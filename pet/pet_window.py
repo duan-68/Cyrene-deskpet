@@ -30,7 +30,7 @@ class PetWindow(QWidget):
         self._screen = QApplication.primaryScreen().virtualGeometry()
         self.setGeometry(self._screen)
 
-        self._idle = _load_frames(frames_dir, "idle", 4) or [QPixmap()]
+        self._idle = _load_frames(frames_dir, "idle", 8) or [QPixmap()]
         self._move = _load_frames(frames_dir, "move", 4) or self._idle
         self._act = _load_frames(frames_dir, "act", 2) or self._idle
 
