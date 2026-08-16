@@ -889,8 +889,11 @@ requestAnimationFrame(tick);
 body.pet-mode{background:transparent!important}
 body.pet-mode header,body.pet-mode #panel,body.pet-mode #drop,
 body.pet-mode #fps,body.pet-mode #rigInfo{display:none!important}
-body.pet-mode #main{display:block}
-body.pet-mode #stage,body.pet-mode #stage.checker{background:transparent!important}
+body.pet-mode #main{display:block;height:100vh}
+body.pet-mode #stage,body.pet-mode #stage.checker{
+  background:transparent!important;
+  position:absolute;inset:0;width:100vw;height:100vh;
+}
 body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointer-events:none}
 #petIcon{position:fixed;display:none;width:40px;height:40px;z-index:200;pointer-events:none;
   background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.45);
@@ -951,10 +954,27 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
     ws.onclose=function(){setTimeout(connect,2000);};
   }
 
-  fetch('sample.psd').then(function(r){return r.arrayBuffer();})
-    .then(function(buf){return loadPsdBuffer(buf);})
-    .then(function(){setTimeout(resetPet,300);})
-    .catch(function(){});
+  function applyPsdBuf(buf){
+    console.log('[pet] applyPsdBuf size='+buf.length);
+    var psd=window.agPsd.readPsd(new Uint8Array(buf),{useImageData:true,skipThumbnail:true});
+    console.log('[pet] psd parsed, agPsd='+!!window.agPsd+' Rigger='+!!window.Rigger);
+    window.__loadPsdData(psd);
+    console.log('[pet] rig applied, window='+window.innerWidth+'x'+window.innerHeight+' canvas='+canvas.width+'x'+canvas.height);
+    var st=document.getElementById('stage');
+    console.log('[pet] stage='+st.clientWidth+'x'+st.clientHeight+' canvasRect='+JSON.stringify(canvas.getBoundingClientRect()));
+    setTimeout(resetPet,300);
+  }
+  function loadPetPsd(){
+    if(window.petAPI){
+      window.petAPI.getSamplePsd().then(applyPsdBuf)
+        .catch(function(e){console.error('petAPI load fail',e);});
+      return;
+    }
+    fetch('sample.psd').then(function(r){return r.arrayBuffer();})
+      .then(applyPsdBuf)
+      .catch(function(e){console.error('fetch load fail',e);});
+  }
+  loadPetPsd();
   connect();
 })();
 </script>
