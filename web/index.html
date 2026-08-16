@@ -906,11 +906,11 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   background:transparent;background-size:cover;background-position:center;
   align-items:center;justify-content:center;font-size:32px}
 @keyframes noteFloat{
-  0%{transform:translateY(0) scale(.4);opacity:0}
-  25%{opacity:1;transform:translateY(-5px) scale(1)}
-  50%{transform:translateY(-9px) scale(1.05);opacity:1}
-  75%{transform:translateY(-4px) scale(1);opacity:.8}
-  100%{transform:translateY(0) scale(.9);opacity:0}
+  0%{transform:translateY(0) scale(.7);opacity:0}
+  35%{opacity:1;transform:translateY(-4px) scale(1)}
+  60%{transform:translateY(-8px) scale(1.03);opacity:1}
+  85%{transform:translateY(-3px) scale(1);opacity:.6}
+  100%{transform:translateY(0) scale(.95);opacity:0}
 }
 </style>
 <script>
@@ -1043,7 +1043,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
 
   // ---- 投喂 ----
   var FOODS=['🍎','🍪','🍬','🍩','🍭','🧁','🍫','🍓'];
-  var NOTES=['♪','♫','♬','🎵','🎶'];
+  var NOTES=['♪','♫','♬'];
   function spawnNotes(cx,cy){
     var positions=[
       {x:-95,y:-15},{x:-55,y:8},{x:-75,y:-25},
@@ -1056,7 +1056,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       n.style.cssText='position:fixed;z-index:300;font-size:'+(20+(i%2)*6)+'px;color:#ff9ecf;pointer-events:none;text-shadow:0 0 6px rgba(255,158,207,.9);';
       n.style.left=(cx+pos.x)+'px';
       n.style.top=(cy+pos.y)+'px';
-      n.style.animation='noteFloat 2.4s ease-in-out '+(i*0.18)+'s forwards';
+      n.style.animation='noteFloat 2.6s ease-in-out '+(i*0.25)+'s forwards';
       document.body.appendChild(n);
       setTimeout(function(){n.remove();},3000);
     }
