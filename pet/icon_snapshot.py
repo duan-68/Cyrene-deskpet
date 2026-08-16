@@ -167,3 +167,53 @@ class IconSnapshot:
 
     def get(self, filename: str) -> IconInfo | None:
         return self._snapshot.get(filename)
+
+
+def extract_icon_png_b64(lnk_path, size=48):
+    """提取 .lnk 快捷方式图标为 base64 PNG 字符串。"""
+    import io
+    import base64
+    import win32gui
+    import win32ui
+    import win32con
+    from PIL import Image
+
+    SHGFI_ICON = 0x100
+
+    class _SHFILEINFOW(ctypes.Structure):
+        _fields_ = [
+            ("hIcon", wt.HICON),
+            ("iIcon", ctypes.c_int),
+            ("dwAttributes", wt.DWORD),
+            ("szDisplayName", ctypes.c_wchar * 260),
+            ("szTypeName", ctypes.c_wchar * 80),
+        ]
+
+    shell32 = ctypes.windll.shell32
+    shell32.SHGetFileInfoW.restype = ctypes.c_size_t
+    shell32.SHGetFileInfoW.argtypes = [
+        wt.LPCWSTR, wt.DWORD, ctypes.POINTER(_SHFILEINFOW), wt.UINT, wt.UINT]
+
+    sfi = _SHFILEINFOW()
+    shell32.SHGetFileInfoW(str(lnk_path), 0, ctypes.byref(sfi),
+                           ctypes.sizeof(sfi), SHGFI_ICON | 0)
+    hicon = sfi.hIcon
+    if not hicon:
+        return None
+    try:
+        hdc = win32ui.CreateDCFromHandle(win32gui.GetDC(0))
+        memdc = hdc.CreateCompatibleDC()
+        bmp = win32ui.CreateBitmap()
+        bmp.CreateCompatibleBitmap(hdc, size, size)
+        memdc.SelectObject(bmp)
+        win32gui.DrawIconEx(memdc.GetSafeHdc(), 0, 0, hicon, size, size,
+                            0, None, win32con.DI_NORMAL)
+        bmpinfo = bmp.GetInfo()
+        bmpstr = bmp.GetBitmapBits(True)
+        img = Image.frombuffer('RGBA', (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+                               bmpstr, 'raw', 'BGRA', 0, 1)
+        buf = io.BytesIO()
+        img.save(buf, 'PNG')
+        return base64.b64encode(buf.getvalue()).decode()
+    finally:
+        win32gui.DestroyIcon(hicon)

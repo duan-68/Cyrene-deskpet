@@ -6,7 +6,8 @@ from pathlib import Path
 import websockets
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from pet.icon_snapshot import find_desktop_listview, enum_icon_positions
+from pet.icon_snapshot import (find_desktop_listview, enum_icon_positions,
+                               extract_icon_png_b64)
 from pet.file_watcher import FileWatcher
 
 DESKTOP = Path.home() / "Desktop"
@@ -16,7 +17,8 @@ PORT = 8765
 class Backend:
     def __init__(self):
         self.clients = set()
-        self.snapshot = {}  # {filename: (x, y)}
+        self.snapshot = {}      # {filename: (x, y, icon_b64)}
+        self._icon_cache = {}   # {filename: icon_b64}
         self.loop = None
 
     def refresh_snapshot(self):
@@ -27,8 +29,14 @@ class Backend:
         snap = {}
         for name, x, y in items:
             filename = name + ".lnk"
-            if (DESKTOP / filename).exists():
-                snap[filename] = (x, y)
+            lnk = DESKTOP / filename
+            if not lnk.exists():
+                continue
+            icon = self._icon_cache.get(filename)
+            if icon is None:
+                icon = extract_icon_png_b64(str(lnk))
+                self._icon_cache[filename] = icon
+            snap[filename] = (x, y, icon)
         self.snapshot = snap
 
     def on_delete(self, filename, mode):
@@ -37,10 +45,12 @@ class Backend:
         if info is None:
             print(f"  '{filename}' not in snapshot", flush=True)
             return
-        x, y = info
+        x, y, icon = info
         msg = json.dumps({
-            "type": "delete", "filename": filename, "x": x, "y": y})
-        print(f"  broadcasting: {msg}", flush=True)
+            "type": "delete", "filename": filename,
+            "x": x, "y": y, "icon": icon})
+        print(f"  broadcasting: x={x} y={y} icon={'yes' if icon else 'no'}",
+              flush=True)
         if self.loop:
             asyncio.run_coroutine_threadsafe(self.broadcast(msg), self.loop)
 
