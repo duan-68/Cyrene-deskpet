@@ -908,17 +908,15 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   icon.id='petIcon';icon.textContent='📦';
   document.body.appendChild(icon);
   var HOME={x:0.5,y:0.72};
+  var PET_SIZE=180;
   var busy=false;
 
-  function homePos(){
-    var r=canvas.getBoundingClientRect();
-    return {x:window.innerWidth*HOME.x-r.width/2,
-            y:window.innerHeight*HOME.y-r.height/2};
-  }
   function resetPet(){
-    var p=homePos();
     canvas.style.transition='none';
-    canvas.style.left=p.x+'px';canvas.style.top=p.y+'px';
+    canvas.style.width=PET_SIZE+'px';
+    canvas.style.height=PET_SIZE+'px';
+    canvas.style.left=(window.innerWidth*HOME.x-PET_SIZE/2)+'px';
+    canvas.style.top=(window.innerHeight*HOME.y-PET_SIZE/2)+'px';
   }
 
   function animateDelete(msg){

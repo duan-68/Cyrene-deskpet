@@ -73,12 +73,6 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     console.log('[main] did-finish-load visible=' + win.isVisible() +
       ' bounds=' + JSON.stringify(win.getBounds()));
-    setTimeout(() => {
-      win.webContents.capturePage().then((img) => {
-        fs.writeFileSync(path.join(__dirname, 'screenshot.png'), img.toPNG());
-        console.log('[main] screenshot saved');
-      }).catch((e) => console.log('[main] screenshot fail', e.message));
-    }, 3000);
   });
   win.loadFile(path.join(__dirname, '..', 'web', 'index.html'), { query: { pet: '1' } });
 }
