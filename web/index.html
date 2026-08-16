@@ -392,7 +392,7 @@ const DEFAULTS = Object.assign({}, P);
 let lastPsd=null, lastPre=null;
 const T = Object.assign({}, P);
 const cur = Object.assign({}, P);
-const auto = { idle:true, blink:true, rand:true, talk:true, mouse:false, mic:false, phys:true, cam:false };
+const auto = { idle:true, blink:true, rand:true, talk:true, mouse:true, mic:false, phys:true, cam:false };
 let happyUntil = 0;
 let dizzyUntil = 0;
 let hairAmpOverride = null;
@@ -535,9 +535,11 @@ document.getElementById('layers').addEventListener('click',e=>{
 document.querySelectorAll('#panel .sec > h2').forEach(h=>h.addEventListener('click',()=>h.parentNode.classList.toggle('collapsed')));
 
 let mouse={x:0,y:0,in:false};
-cv.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
-  mouse.x=(e.clientX-r.left)/r.width*2-1; mouse.y=(e.clientY-r.top)/r.height*2-1; mouse.in=true; });
-cv.addEventListener('mouseleave',()=>mouse.in=false);
+window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  mouse.x=clamp((e.clientX-cx)/(r.width/2),-1,1);
+  mouse.y=clamp((e.clientY-cy)/(r.height/2),-1,1);
+  mouse.in=true; });
 
 // ---------- mic ----------
 let micLevel=0, analyser=null, micBuf=null;
