@@ -3,7 +3,8 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const WEB_DIR = path.join(__dirname, '..', 'web');
+const RES_DIR = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
+const WEB_DIR = path.join(RES_DIR, 'web');
 
 ipcMain.handle('get-sample-psd', () => {
   return fs.readFileSync(path.join(WEB_DIR, 'pet.psd'));
@@ -40,7 +41,7 @@ function createTray() {
 let win = null;
 
 function startBackend() {
-  const script = path.join(__dirname, '..', 'pet', 'backend_server.py');
+  const script = path.join(RES_DIR, 'pet', 'backend_server.py');
   pythonProc = spawn('python', [script], { stdio: 'ignore' });
   pythonProc.on('exit', (code) => {
     if (!app.isQuitting) {

@@ -5,13 +5,40 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "electron-builder"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^43.4.0"
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.desktoppet.app",
+    "productName": "DesktopPet",
+    "files": [
+      "main.js",
+      "preload.js",
+      "tray.png"
+    ],
+    "extraResources": [
+      {
+        "from": "../web",
+        "to": "web"
+      },
+      {
+        "from": "../pet",
+        "to": "pet"
+      }
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }
