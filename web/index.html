@@ -919,7 +919,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   85%{transform:translateY(-3px) scale(1);opacity:.6}
   100%{transform:translateY(0) scale(.95);opacity:0}
 }
-.dizzyEye{position:absolute;z-index:250;width:26px;height:22px;pointer-events:none;
+.dizzyEye{position:absolute;z-index:250;width:18px;height:15px;pointer-events:none;
   transform:translate(-50%,-50%);
   background:url(dizzy.png) center/contain no-repeat;
   animation:dizzySpin .7s linear infinite}
@@ -1029,7 +1029,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   var dragLastX=0, dragLastY=0, dragLastT=0, dizzyCooldown=0;
   function spawnDizzyEyes(){
     var dx=PET_SIZE*0.1;
-    var ey=PET_SIZE*0.40;
+    var ey=PET_SIZE*0.30;
     var offX=PET_SIZE*0.04;
     for(var i=0;i<2;i++){
       (function(i){
