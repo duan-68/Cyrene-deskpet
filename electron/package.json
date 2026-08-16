@@ -17,8 +17,8 @@
     "electron-builder": "^26.15.3"
   },
   "build": {
-    "appId": "com.desktoppet.app",
-    "productName": "DesktopPet",
+    "appId": "com.cyrene.deskpet",
+    "productName": "Cyrene deskpet v0.1",
     "files": [
       "main.js",
       "preload.js",
@@ -35,7 +35,9 @@
       }
     ],
     "win": {
-      "target": "portable"
+      "target": "portable",
+      "icon": "icon.ico",
+      "artifactName": "Cyrene deskpet v0.1.exe"
     },
     "directories": {
       "output": "dist"

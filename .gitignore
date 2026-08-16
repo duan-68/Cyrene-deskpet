@@ -4,3 +4,7 @@ __pycache__/
 .pytest_cache/
 dist/
 build/
+electron/backend_dist/
+electron/backend_build/
+backend_server.spec
+pet/backend_server.exe

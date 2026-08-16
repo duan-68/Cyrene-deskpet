@@ -41,8 +41,17 @@ function createTray() {
 let win = null;
 
 function startBackend() {
-  const script = path.join(RES_DIR, 'pet', 'backend_server.py');
-  pythonProc = spawn('python', [script], { stdio: 'ignore' });
+  let cmd, args;
+  if (app.isPackaged) {
+    // 打包后：调用 PyInstaller 打包的独立后端 exe（不依赖 Python 环境）
+    cmd = path.join(RES_DIR, 'pet', 'backend_server.exe');
+    args = [];
+  } else {
+    // 开发：用系统 Python 运行
+    cmd = 'python';
+    args = [path.join(RES_DIR, 'pet', 'backend_server.py')];
+  }
+  pythonProc = spawn(cmd, args, { stdio: 'ignore' });
   pythonProc.on('exit', (code) => {
     if (!app.isQuitting) {
       // 后端异常退出时重启
