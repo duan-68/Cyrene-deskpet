@@ -8,7 +8,7 @@ PET_SRC = ASSETS_DIR / "pet.png"
 
 DESKTOP_PATH = Path.home() / "Desktop"
 
-PET_HEIGHT = 200              # 角色缩放高度（px）
+PET_HEIGHT = 100              # 角色缩放高度（px）
 SNAPSHOT_INTERVAL_MS = 1000   # 图标快照周期
 ANIMATION_FPS = 60            # 动画帧率
 

@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from pet.config import PET_SRC
+from pet.config import PET_SRC, PET_HEIGHT
 from pet.frames import generate_frames
 
 
@@ -20,7 +20,7 @@ def test_generated_frame_is_sized(tmp_path):
     img = Image.open(paths[0])
     assert img.mode == "RGBA"
     w, h = img.size
-    assert h == 200 and w > 0
+    assert h == PET_HEIGHT + 8 and w > 0
 
 
 def test_generated_frame_has_transparency(tmp_path):
