@@ -639,6 +639,9 @@ function smooth(t){t=clamp(t,0,1);return t*t*(3-2*t)}
 
 function fadeAlpha(L,e){
   if(!L.fade) return 1;
+  if((L.fade==='eyeOpen'||L.fade==='eyeClose') && dizzyUntil>performance.now()){
+    return 0;
+  }
   if(L.fade==='eyeOpen'){ const v=L.side==='L'?e.eyeOpenL:e.eyeOpenR; return smooth((v-(0.10+e.eyeEase*0.45))/0.15); }
   if(L.fade==='eyeClose'){ const v=L.side==='L'?e.eyeOpenL:e.eyeOpenR; return 1-smooth((v-(0.10+e.eyeEase*0.45))/0.15); }
   if(L.fade==='mouthOpen') return smooth((e.mouthOpen-(0.05+e.mouthEase*0.35))/0.12);
