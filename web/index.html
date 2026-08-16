@@ -1030,11 +1030,12 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   function spawnDizzyEyes(){
     var dx=PET_SIZE*0.13;
     var ey=PET_SIZE*0.40;
+    var offX=PET_SIZE*0.04;
     for(var i=0;i<2;i++){
       (function(i){
         var eye=document.createElement('div');
         eye.className='dizzyEye';
-        eye.style.left=(PET_SIZE/2+(i===0?-dx:dx))+'px';
+        eye.style.left=(PET_SIZE/2+offX+(i===0?-dx:dx))+'px';
         eye.style.top=ey+'px';
         holder.appendChild(eye);
         setTimeout(function(){eye.remove();},2000);
