@@ -16,9 +16,13 @@ class Dispatcher:
         self._queue = deque(maxlen=max_queue)
         self._current = None
         self._running = True
+        self._paused = False
+
+    def set_paused(self, paused):
+        self._paused = paused
 
     def on_delete(self, filename, mode):
-        if not self._running:
+        if not self._running or self._paused:
             return
         info = self._snapshot.get(filename)
         if info is None:
