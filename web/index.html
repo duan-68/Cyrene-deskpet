@@ -1063,7 +1063,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
         var speed=Math.sqrt(dx*dx+dy*dy)/dt;
         if(speed>900 && now>dizzyCooldown){
           dizzyCooldown=now+3000;
-          if(window.__setDizzy)window.__setDizzy(2200);
+          if(window.__setDizzy)window.__setDizzy(1200);
           spawnDizzyEyes();
         }
         dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=now;
