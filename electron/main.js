@@ -73,6 +73,20 @@ function createWindow() {
   // 鼠标穿透（用户仍可操作桌面图标）；托盘为独立窗口不受影响
   win.setIgnoreMouseEvents(true, { forward: true });
   win.setAlwaysOnTop(true, 'screen-saver');
+  // 始终置顶：定期重新置顶 + 失焦时重新置顶
+  const keepTop = setInterval(() => {
+    if (win && !win.isDestroyed()) {
+      win.setAlwaysOnTop(true, 'screen-saver');
+      win.moveTop();
+    }
+  }, 2000);
+  win.on('blur', () => {
+    if (win && !win.isDestroyed()) {
+      win.setAlwaysOnTop(true, 'screen-saver');
+      win.moveTop();
+    }
+  });
+  win.on('closed', () => clearInterval(keepTop));
   win.webContents.on('console-message', (event) => {
     console.log('[renderer]', event.message);
   });
