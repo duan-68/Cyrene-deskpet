@@ -905,6 +905,13 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
 #petIcon{position:fixed;display:none;width:48px;height:48px;z-index:200;pointer-events:none;
   background:transparent;background-size:cover;background-position:center;
   align-items:center;justify-content:center;font-size:32px}
+@keyframes noteFloat{
+  0%{transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1;transform:translateY(-5px) scale(1)}
+  50%{transform:translateY(-9px) scale(1.05);opacity:1}
+  75%{transform:translateY(-4px) scale(1);opacity:.8}
+  100%{transform:translateY(0) scale(.9);opacity:0}
+}
 </style>
 <script>
 (function(){
@@ -1038,34 +1045,27 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
   var FOODS=['🍎','🍪','🍬','🍩','🍭','🧁','🍫','🍓'];
   var NOTES=['♪','♫','♬','🎵','🎶'];
   function spawnNotes(cx,cy){
-    for(var i=0;i<7;i++){
-      (function(i){
-        setTimeout(function(){
-          var n=document.createElement('div');
-          n.textContent=NOTES[Math.floor(Math.random()*NOTES.length)];
-          n.style.cssText='position:fixed;z-index:300;font-size:'+(18+Math.random()*14)+'px;color:#ff9ecf;pointer-events:none;transition:all 1.5s ease-out;text-shadow:0 0 6px rgba(255,158,207,.8);';
-          n.style.left=(cx+(Math.random()*100-50))+'px';
-          n.style.top=cy+'px';
-          n.style.opacity='0';
-          document.body.appendChild(n);
-          void n.offsetHeight;
-          n.style.top=(cy-70-Math.random()*70)+'px';
-          n.style.left=(cx+(Math.random()*160-80))+'px';
-          n.style.opacity='1';
-          setTimeout(function(){
-            n.style.opacity='0';
-            setTimeout(function(){n.remove();},1500);
-          },1300);
-        },i*160);
-      })(i);
+    var positions=[
+      {x:-95,y:-15},{x:-55,y:8},{x:-75,y:-25},
+      {x:95,y:-15},{x:55,y:8},{x:75,y:-25}
+    ];
+    for(var i=0;i<positions.length;i++){
+      var pos=positions[i];
+      var n=document.createElement('div');
+      n.textContent=NOTES[i%NOTES.length];
+      n.style.cssText='position:fixed;z-index:300;font-size:'+(20+(i%2)*6)+'px;color:#ff9ecf;pointer-events:none;text-shadow:0 0 6px rgba(255,158,207,.9);';
+      n.style.left=(cx+pos.x)+'px';
+      n.style.top=(cy+pos.y)+'px';
+      n.style.animation='noteFloat 2.4s ease-in-out '+(i*0.18)+'s forwards';
+      document.body.appendChild(n);
+      setTimeout(function(){n.remove();},3000);
     }
   }
   function feed(){
     var r=canvas.getBoundingClientRect();
     var cx=r.left+r.width/2;
     var cy=r.top+r.height*0.4;
-    if(window.__setHappy)window.__setHappy(2500);
-    spawnNotes(cx, r.top+r.height*0.28);
+    spawnNotes(cx, r.top+r.height*0.25);
     for(var i=0;i<14;i++){
       (function(i){
         setTimeout(function(){
