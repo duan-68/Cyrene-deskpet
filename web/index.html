@@ -358,6 +358,7 @@ function genericOpts(){
 window.__loadPsdData=function(psd){ lastPre=window.Rigger.cleanPsdLayers(psd); lastPsd=psd; applyRig(window.Rigger.buildRig(psd, genericOpts())); }; // test hook
 window.__setHappy=function(ms){ happyUntil = performance.now() + (ms||2500); };
 window.__setDizzy=function(ms){ dizzyUntil = performance.now() + (ms||2000); };
+window.__setHairAmp=function(amp){ hairAmpOverride = amp; };
 document.getElementById('btnFile').addEventListener('click',()=>document.getElementById('fileInput').click());
 document.getElementById('fileInput').addEventListener('change',async ev=>{
   const f=ev.target.files[0]; if(f) loadPsdBuffer(await f.arrayBuffer());
@@ -394,6 +395,7 @@ const cur = Object.assign({}, P);
 const auto = { idle:true, blink:true, rand:true, talk:true, mouse:false, mic:false, phys:true, cam:false };
 let happyUntil = 0;
 let dizzyUntil = 0;
+let hairAmpOverride = null;
 
 const sliders = { pAngleX:'angleX',pAngleY:'angleY',pAngleZ:'angleZ',pEyeL:'eyeOpenL',pEyeR:'eyeOpenR',
   pEyeX:'eyeX',pEyeY:'eyeY',pBrow:'brow',pMouthOpen:'mouthOpen',pMouthForm:'mouthForm',
@@ -830,7 +832,12 @@ function tick(now){
   if(dizzyUntil>now){
     tgt.eyeOpenL=Math.min(tgt.eyeOpenL,0.02);
     tgt.eyeOpenR=Math.min(tgt.eyeOpenR,0.02);
-    tgt.physAmp=5.0; tgt.fhAmp=4.0; tgt.soft=4.0; tgt.fhSoft=1.2;
+  }
+  if(hairAmpOverride !== null){
+    tgt.physAmp = hairAmpOverride;
+    tgt.fhAmp = hairAmpOverride * 0.8;
+    tgt.soft = hairAmpOverride;
+    tgt.fhSoft = 0.4 + hairAmpOverride * 0.2;
   }
   if(auto.mic&&analyser){ analyser.getByteFrequencyData(micBuf);
     let s=0; for(let i=2;i<40;i++)s+=micBuf[i]; s/=38*255;
@@ -1066,6 +1073,8 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
           if(window.__setDizzy)window.__setDizzy(1200);
           spawnDizzyEyes();
         }
+        var amp=Math.min(6, 2 + (speed/2000)*4);
+        if(window.__setHairAmp)window.__setHairAmp(amp);
         dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=now;
       }
       holder.style.transition='none';
@@ -1085,6 +1094,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   window.addEventListener('mouseup',function(){
     if(dragging){
       dragging=false;
+      if(window.__setHairAmp)window.__setHairAmp(2);
       var r=canvas.getBoundingClientRect();
       HOME={x:(r.left+r.width/2)/window.innerWidth,
             y:(r.top+r.height/2)/window.innerHeight};
