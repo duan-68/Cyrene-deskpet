@@ -357,6 +357,7 @@ function genericOpts(){
 }
 window.__loadPsdData=function(psd){ lastPre=window.Rigger.cleanPsdLayers(psd); lastPsd=psd; applyRig(window.Rigger.buildRig(psd, genericOpts())); }; // test hook
 window.__setHappy=function(ms){ happyUntil = performance.now() + (ms||2500); };
+window.__setDizzy=function(ms){ dizzyUntil = performance.now() + (ms||2000); };
 document.getElementById('btnFile').addEventListener('click',()=>document.getElementById('fileInput').click());
 document.getElementById('fileInput').addEventListener('change',async ev=>{
   const f=ev.target.files[0]; if(f) loadPsdBuffer(await f.arrayBuffer());
@@ -392,6 +393,7 @@ const T = Object.assign({}, P);
 const cur = Object.assign({}, P);
 const auto = { idle:true, blink:true, rand:true, talk:true, mouse:false, mic:false, phys:true, cam:false };
 let happyUntil = 0;
+let dizzyUntil = 0;
 
 const sliders = { pAngleX:'angleX',pAngleY:'angleY',pAngleZ:'angleZ',pEyeL:'eyeOpenL',pEyeR:'eyeOpenR',
   pEyeX:'eyeX',pEyeY:'eyeY',pBrow:'brow',pMouthOpen:'mouthOpen',pMouthForm:'mouthForm',
@@ -822,6 +824,11 @@ function tick(now){
       tgt.eyeOpenL=Math.min(tgt.eyeOpenL,v); tgt.eyeOpenR=Math.min(tgt.eyeOpenR,v);
     }
   }
+  if(dizzyUntil>now){
+    tgt.eyeOpenL=Math.min(tgt.eyeOpenL,0.02);
+    tgt.eyeOpenR=Math.min(tgt.eyeOpenR,0.02);
+    tgt.physAmp=5.0; tgt.fhAmp=4.0; tgt.soft=4.0; tgt.fhSoft=1.2;
+  }
   if(auto.mic&&analyser){ analyser.getByteFrequencyData(micBuf);
     let s=0; for(let i=2;i<40;i++)s+=micBuf[i]; s/=38*255;
     micLevel+=(clamp(s*3.2,0,1)-micLevel)*0.45;
@@ -1008,6 +1015,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
 
   // ---- 拖拽 ----
   var dragging=false, overPet=false, dragOff={x:0,y:0};
+  var dragLastX=0, dragLastY=0, dragLastT=0, dizzyCooldown=0;
   function overPetAt(mx,my){
     var r=canvas.getBoundingClientRect();
     return mx>=r.left&&mx<=r.right&&my>=r.top&&my<=r.bottom;
@@ -1019,6 +1027,17 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       if(window.petAPI)window.petAPI.setIgnoreMouse(!over);
     }
     if(dragging){
+      var now=performance.now();
+      var dt=(now-dragLastT)/1000;
+      if(dt>0.01){
+        var dx=e.clientX-dragLastX, dy=e.clientY-dragLastY;
+        var speed=Math.sqrt(dx*dx+dy*dy)/dt;
+        if(speed>1500 && now>dizzyCooldown){
+          dizzyCooldown=now+3000;
+          if(window.__setDizzy)window.__setDizzy(2200);
+        }
+        dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=now;
+      }
       canvas.style.transition='none';
       canvas.style.left=(e.clientX-dragOff.x)+'px';
       canvas.style.top=(e.clientY-dragOff.y)+'px';
@@ -1029,6 +1048,7 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
       dragging=true;
       var r=canvas.getBoundingClientRect();
       dragOff={x:e.clientX-r.left,y:e.clientY-r.top};
+      dragLastX=e.clientX; dragLastY=e.clientY; dragLastT=performance.now();
       canvas.style.transition='none';
     }
   });
