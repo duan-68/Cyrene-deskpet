@@ -1043,10 +1043,9 @@ body.pet-mode canvas{position:fixed;margin:0;left:0;top:0;transition:none;pointe
           food.style.top='-60px';
           food.style.opacity='1';
           document.body.appendChild(food);
-          requestAnimationFrame(function(){
-            food.style.top=(cy+Math.random()*30)+'px';
-            food.style.transform='rotate('+(Math.random()*360-180)+'deg)';
-          });
+          void food.offsetHeight;
+          food.style.top=(cy+Math.random()*30)+'px';
+          food.style.transform='rotate('+(Math.random()*360-180)+'deg)';
           setTimeout(function(){
             food.style.opacity='0';
             food.style.transform+=' scale(.3)';
