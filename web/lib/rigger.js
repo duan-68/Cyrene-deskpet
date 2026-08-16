@@ -24,9 +24,10 @@
   var SLOTS = {
     'back hair':   { depth: 0.55, group: 'head', phys: 'hair' },
     'bottomwear':  { depth: 0.88, group: 'body' },
+    'legwear':     { depth: 0.85, group: 'body' },
     'neck':        { depth: 0.95, group: 'body' },
     'topwear':     { depth: 0.90, group: 'body' },
-    'handwear':    { depth: 0.86, group: 'body' },
+    'handwear':    { depth: 0.84, group: 'body' },
     'earwear':     { depth: 0.97, group: 'head' },
     'ears':        { depth: 0.96, group: 'head' },
     'face':        { depth: 1.00, group: 'head' },
