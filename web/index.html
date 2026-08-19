@@ -642,6 +642,9 @@ function clamp(v,a,b){return v<a?a:v>b?b:v}
 function smooth(t){t=clamp(t,0,1);return t*t*(3-2*t)}
 function hash(i){var n=Math.sin(i*127.1+311.7)*43758.5453;return n-Math.floor(n);}
 function vnoise(x){var i=Math.floor(x),f=x-i;f=f*f*(3-2*f);return hash(i)+(hash(i+1)-hash(i))*f;}
+function pnoise(x){var i=Math.floor(x),f=x-i;var u=f*f*(3-2*f);
+  var g0=(hash(i)<0.5?-1:1)*f, g1=(hash(i+1)<0.5?-1:1)*(f-1);
+  return (g0+u*(g1-g0))*0.6;}
 
 function fadeAlpha(L,e){
   if(!L.fade) return 1;
@@ -799,10 +802,10 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    tgt.angleX+=(vnoise(t*0.5)-0.5)*0.42;
-    tgt.angleY+=(vnoise(t*0.4+10)-0.5)*0.30;
-    tgt.angleZ+=(vnoise(t*0.45+20)-0.5)*0.24;
-    tgt.body +=(vnoise(t*0.35+30)-0.5)*0.30;
+    tgt.angleX+=pnoise(t*0.5)*0.50;
+    tgt.angleY+=pnoise(t*0.4+10)*0.36;
+    tgt.angleZ+=pnoise(t*0.45+20)*0.29;
+    tgt.body +=pnoise(t*0.35+30)*0.36;
   }
   if(happyUntil>now){
     tgt.angleX+=0.36*Math.sin(t*6.0);
