@@ -936,6 +936,8 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   background:url(dizzy.png) center/contain no-repeat;
   animation:dizzySpin .7s linear infinite}
 @keyframes dizzySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.musicNote{position:fixed;z-index:290;width:30px;height:30px;pointer-events:none;
+  object-fit:contain;filter:drop-shadow(0 0 5px rgba(255,158,207,.9))}
 </style>
 <script>
 (function(){
@@ -1158,6 +1160,38 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
     }
   });
   if(window.petAPI)window.petAPI.onFeed(feed);
+
+  // ---- 周期性晃头晃脑 + 粉色音符 ----
+  function spawnMusicNotes(){
+    var r=canvas.getBoundingClientRect();
+    var cx=r.left+r.width/2;
+    var cy=r.top+r.height*0.22;
+    var count=5;
+    for(var i=0;i<count;i++){
+      (function(i){
+        var n=document.createElement('img');
+        n.src='music/note_'+(1+Math.floor(Math.random()*9))+'.png';
+        n.className='musicNote';
+        var ang=i/count*2*Math.PI;
+        n.style.left=(cx+Math.cos(ang)*70-15)+'px';
+        n.style.top=(cy+Math.sin(ang)*45-15)+'px';
+        n.style.animation='noteFloat 3s ease-in-out '+(i*0.15)+'s both';
+        document.body.appendChild(n);
+        setTimeout(function(){n.remove();},3300);
+      })(i);
+    }
+  }
+  function headShake(){
+    if(window.__setHappy)window.__setHappy(2000);
+    spawnMusicNotes();
+  }
+  function scheduleHeadShake(){
+    setTimeout(function(){
+      headShake();
+      scheduleHeadShake();
+    }, 5000+Math.random()*10000);
+  }
+  scheduleHeadShake();
 })();
 </script>
 </body>
