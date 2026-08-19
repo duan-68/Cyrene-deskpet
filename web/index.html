@@ -535,7 +535,7 @@ document.getElementById('layers').addEventListener('click',e=>{
 document.querySelectorAll('#panel .sec > h2').forEach(h=>h.addEventListener('click',()=>h.parentNode.classList.toggle('collapsed')));
 
 let mouse={x:0,y:0,in:false};
-let lastMouseMove=0, wander={ex:0,ey:0};
+let lastMouseMove=0, wander={ex:0,ey:0}, wanderV={ex:0,ey:0};
 window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top+r.height/2;
   mouse.x=clamp((e.clientX-cx)/(r.width/2),-1,1);
@@ -802,20 +802,26 @@ function tick(now){
     tgt.mouthOpen=Math.max(tgt.mouthOpen,cam.mo);
     tgt.body=clamp(tgt.body+cam.ax*0.25,-1,1);
   }
-  if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
-    tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
-  // 鼠标 2.5s 不动，眼睛好奇地随机打量四周
+  if(!camLive&&auto.mouse&&mouse.in){
+    tgt.angleX=clamp(mouse.x*0.3,-1,1);
+    tgt.angleY=clamp(mouse.y*0.3,-1,1);
+    if(now-lastMouseMove<=2500){
+      tgt.eyeX=clamp(mouse.x*1.8,-1,1);
+      tgt.eyeY=clamp(mouse.y*2.0,-1,1);
+    }
+  }
+  // 鼠标 2.5s 不动，眼睛平滑地随机打量四周
   if(now-lastMouseMove>2500){
-    wander.ex+=(Math.random()*2-1)*dt*0.15;
-    wander.ey+=(Math.random()*2-1)*dt*0.15;
-    wander.ex=clamp(wander.ex,-0.7,0.7);
-    wander.ey=clamp(wander.ey,-0.7,0.7);
-    tgt.eyeX=clamp(tgt.eyeX+wander.ex,-1,1);
-    tgt.eyeY=clamp(tgt.eyeY+wander.ey,-1,1);
+    wanderV.ex+=(Math.random()*2-1)*0.001; wanderV.ex=clamp(wanderV.ex,-0.05,0.05);
+    wanderV.ey+=(Math.random()*2-1)*0.001; wanderV.ey=clamp(wanderV.ey,-0.05,0.05);
+    wander.ex=clamp(wander.ex+wanderV.ex,-1,1);
+    wander.ey=clamp(wander.ey+wanderV.ey,-1,1);
+    tgt.eyeX=wander.ex;
+    tgt.eyeY=wander.ey;
   }
   if(auto.idle&&!camLive){
     swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0003;
-    swayV.az=clamp(swayV.az,-0.02,0.02);
+    swayV.az=clamp(swayV.az,-0.015,0.015);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
   }
