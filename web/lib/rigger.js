@@ -17,14 +17,19 @@
     if (n === 'mouth_c') n = 'mouth_close';
     if (n === 'mouth' || /^mouth[ _-]?\d+$/.test(n)) n = 'mouth_open';   // see-through raw output
     if (n === 'レイヤー 1') n = 'facedetail';
+    if (n === 'leg') n = 'legwear';               // 新 PSD 命名
+    if (n === 'fronthair') n = 'front hair';      // 新 PSD 命名（无空格）
     return n;
   }
   function baseName(n) { return n.replace(/_\d+$/, ''); }
 
   var SLOTS = {
     'back hair':   { depth: 0.55, group: 'head', phys: 'hair' },
+    'base':        { depth: 0.56, group: 'body' },
     'bottomwear':  { depth: 0.56, group: 'body' },
     'legwear':     { depth: 0.93, group: 'body' },
+    'lefthand':    { depth: 0.88, group: 'body' },
+    'righthand':   { depth: 0.92, group: 'body' },
     'neck':        { depth: 0.95, group: 'body' },
     'topwear':     { depth: 0.90, group: 'body' },
     'handwear':    { depth: 0.60, group: 'body' },
@@ -518,8 +523,7 @@
         warnings.push('mouth_close が無いため汎用閉じ口を自動配置しました（「口」のバーで調整可）');
       }
     }
-    // 按 depth 排序（depth 大=靠前，后渲染）
-    parts.sort(function (a, b) { return a.depth - b.depth; });
+    // 直接按 PSD 图层顺序渲染（用户已在 PSD 中排好前后关系）
     for (var zi = 0; zi < parts.length; zi++) parts[zi].z = zi;
 
     return { canvas: { w: W, h: H }, layers: parts, anchors: anchors, warnings: warnings, synth: synth };
