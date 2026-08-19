@@ -535,11 +535,13 @@ document.getElementById('layers').addEventListener('click',e=>{
 document.querySelectorAll('#panel .sec > h2').forEach(h=>h.addEventListener('click',()=>h.parentNode.classList.toggle('collapsed')));
 
 let mouse={x:0,y:0,in:false};
+let lastMouseMove=0, wander={ex:0,ey:0};
 window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top+r.height/2;
   mouse.x=clamp((e.clientX-cx)/(r.width/2),-1,1);
   mouse.y=clamp((e.clientY-cy)/(r.height/2),-1,1);
-  mouse.in=true; });
+  mouse.in=true;
+  lastMouseMove=performance.now(); });
 
 // ---------- mic ----------
 let micLevel=0, analyser=null, micBuf=null;
@@ -662,7 +664,7 @@ function fadeAlpha(L,e){
 function deform(L, e){
   const b=L.base, o=L.cur, n=b.length;
   const isHead=L.group==='head';
-  const az=e.angleZ*0.209, cz=Math.cos(az), sz=Math.sin(az);  // ±12度扇形转动
+  const az=e.angleZ*0.137, cz=Math.cos(az), sz=Math.sin(az);  // ±12度扇形转动
   const ab=e.body*0.028, cb=Math.cos(ab), sb=Math.sin(ab);
   const nm=L.name, bn=L.bn;
   const eyeSide=L.side, EA=eyeSide==='L'?A.eyeL:(eyeSide==='R'?A.eyeR:null);
@@ -802,8 +804,17 @@ function tick(now){
   }
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
+  // 鼠标 2.5s 不动，眼睛好奇地随机打量四周
+  if(now-lastMouseMove>2500){
+    wander.ex+=(Math.random()*2-1)*dt*0.15;
+    wander.ey+=(Math.random()*2-1)*dt*0.15;
+    wander.ex=clamp(wander.ex,-0.7,0.7);
+    wander.ey=clamp(wander.ey,-0.7,0.7);
+    tgt.eyeX=clamp(tgt.eyeX+wander.ex,-1,1);
+    tgt.eyeY=clamp(tgt.eyeY+wander.ey,-1,1);
+  }
   if(auto.idle&&!camLive){
-    swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0006;
+    swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0003;
     swayV.az=clamp(swayV.az,-0.02,0.02);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
