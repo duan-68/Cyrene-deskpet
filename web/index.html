@@ -535,7 +535,7 @@ document.getElementById('layers').addEventListener('click',e=>{
 document.querySelectorAll('#panel .sec > h2').forEach(h=>h.addEventListener('click',()=>h.parentNode.classList.toggle('collapsed')));
 
 let mouse={x:0,y:0,in:false};
-let lastMouseMove=0, wander={ex:0,ey:0}, wanderV={ex:0,ey:0};
+let lastMouseMove=0, wander={ex:0,ey:0}, wanderTarget={ex:0,ey:0}, wanderNext=0;
 window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top+r.height/2;
   mouse.x=clamp((e.clientX-cx)/(r.width/2),-1,1);
@@ -810,20 +810,21 @@ function tick(now){
       tgt.eyeY=clamp(mouse.y*2.0,-1,1);
     }
   }
-  // 鼠标 2.5s 不动，眼睛持续平滑地随机打量四周（带回中力，正负对称含向上看）
+  // 鼠标 2.5s 不动，眼睛缓慢随机打量四周（分段随机目标，路径随机不循环）
   if(now-lastMouseMove>2500){
-    wanderV.ex += (-wander.ex*0.003) + (Math.random()*2-1)*0.001;
-    wanderV.ey += (-wander.ey*0.003) + (Math.random()*2-1)*0.001;
-    wanderV.ex=clamp(wanderV.ex,-0.06,0.06);
-    wanderV.ey=clamp(wanderV.ey,-0.06,0.06);
-    wander.ex=clamp(wander.ex+wanderV.ex,-1,1);
-    wander.ey=clamp(wander.ey+wanderV.ey,-1,1);
+    if(now > wanderNext){
+      wanderNext = now + 2000 + Math.random()*3000;   // 每 2~5 秒换一次目标
+      wanderTarget.ex = (Math.random()*2-1)*0.9;      // 随机目标方向
+      wanderTarget.ey = (Math.random()*2-1)*0.9;
+    }
+    wander.ex += (wanderTarget.ex - wander.ex) * Math.min(1, dt*0.4);
+    wander.ey += (wanderTarget.ey - wander.ey) * Math.min(1, dt*0.4);
     tgt.eyeX=wander.ex;
     tgt.eyeY=wander.ey;
   }
   if(auto.idle&&!camLive){
-    swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0003;
-    swayV.az=clamp(swayV.az,-0.01,0.01);
+    swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0002;
+    swayV.az=clamp(swayV.az,-0.008,0.008);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
   }
