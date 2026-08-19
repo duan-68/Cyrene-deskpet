@@ -662,7 +662,7 @@ function fadeAlpha(L,e){
 function deform(L, e){
   const b=L.base, o=L.cur, n=b.length;
   const isHead=L.group==='head';
-  const az=e.angleZ*0.07, cz=Math.cos(az), sz=Math.sin(az);
+  const az=e.angleZ*0.436, cz=Math.cos(az), sz=Math.sin(az);  // ±25度扇形转动
   const ab=e.body*0.028, cb=Math.cos(ab), sb=Math.sin(ab);
   const nm=L.name, bn=L.bn;
   const eyeSide=L.side, EA=eyeSide==='L'?A.eyeL:(eyeSide==='R'?A.eyeR:null);
@@ -803,18 +803,9 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    swayV.ax+=(Math.random()*2-1)*0.0004; swayV.ax=clamp(swayV.ax,-0.015,0.015);
-    swayV.ay+=(Math.random()*2-1)*0.0004; swayV.ay=clamp(swayV.ay,-0.015,0.015);
     swayV.az+=(Math.random()*2-1)*0.0004; swayV.az=clamp(swayV.az,-0.015,0.015);
-    swayV.bd+=(Math.random()*2-1)*0.0004; swayV.bd=clamp(swayV.bd,-0.015,0.015);
-    sway.ax=clamp(sway.ax+swayV.ax,-0.22,0.22);
-    sway.ay=clamp(sway.ay+swayV.ay,-0.16,0.16);
-    sway.az=clamp(sway.az+swayV.az,-0.13,0.13);
-    sway.bd=clamp(sway.bd+swayV.bd,-0.16,0.16);
-    tgt.angleX+=sway.ax;
-    tgt.angleY+=sway.ay;
+    sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
-    tgt.body +=sway.bd;
   }
   if(happyUntil>now){
     tgt.angleX+=0.36*Math.sin(t*6.0);
