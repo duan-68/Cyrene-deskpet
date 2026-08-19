@@ -392,7 +392,7 @@ const DEFAULTS = Object.assign({}, P);
 let lastPsd=null, lastPre=null;
 const T = Object.assign({}, P);
 const cur = Object.assign({}, P);
-const auto = { idle:true, blink:true, rand:false, talk:true, mouse:true, mic:false, phys:true, cam:false };
+const auto = { idle:true, blink:true, rand:true, talk:true, mouse:true, mic:false, phys:true, cam:false };
 let happyUntil = 0;
 let dizzyUntil = 0;
 let hairAmpOverride = null;
@@ -808,10 +808,10 @@ function tick(now){
     tgt.angleZ+=0.35*Math.sin(t*5.0+1.2);
   }
   if(auto.rand&&!camLive){
-    if(now>nextRnd){ nextRnd=now+1400+Math.random()*2600;
-      rnd.ax=(Math.random()*2-1)*0.55; rnd.ay=(Math.random()*2-1)*0.40;
-      rnd.az=(Math.random()*2-1)*0.35; rnd.bd=(Math.random()*2-1)*0.30;
-      rnd.ex=(Math.random()*2-1)*0.60; rnd.ey=(Math.random()*2-1)*0.35; }
+    if(now>nextRnd){ nextRnd=now+5000+Math.random()*10000;
+      rnd.ax=(Math.random()*2-1)*0.15; rnd.ay=(Math.random()*2-1)*0.10;
+      rnd.az=(Math.random()*2-1)*0.10; rnd.bd=(Math.random()*2-1)*0.10;
+      rnd.ex=(Math.random()*2-1)*0.20; rnd.ey=(Math.random()*2-1)*0.15; }
     tgt.angleX=clamp(tgt.angleX+rnd.ax,-1,1); tgt.angleY=clamp(tgt.angleY+rnd.ay,-1,1);
     tgt.angleZ=clamp(tgt.angleZ+rnd.az,-1,1); tgt.body=clamp(tgt.body+rnd.bd,-1,1);
     tgt.eyeX=clamp(tgt.eyeX+rnd.ex,-1,1); tgt.eyeY=clamp(tgt.eyeY+rnd.ey,-1,1);
@@ -824,7 +824,7 @@ function tick(now){
     tgt.mouthOpen=Math.max(tgt.mouthOpen,talkV);
   }
   if(auto.blink){
-    if(blinkT<0 && now>nextBlink){ blinkT=0; nextBlink=now+3200+Math.random()*7600; if(Math.random()<0.18)nextBlink=now+560; }
+    if(blinkT<0 && now>nextBlink){ blinkT=0; nextBlink=now+5000+Math.random()*10000; }
     if(blinkT>=0){ blinkT+=dt;
       const d=blinkT; let v;
       if(d<0.08)v=1-d/0.08; else if(d<0.42)v=0; else if(d<0.58)v=(d-0.42)/0.16; else{v=1;blinkT=-1;}
@@ -1070,7 +1070,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
       if(dt>0.01){
         var dx=e.clientX-dragLastX, dy=e.clientY-dragLastY;
         var speed=Math.sqrt(dx*dx+dy*dy)/dt;
-        if(speed>900 && now>dizzyCooldown){
+        if(speed>1500 && now>dizzyCooldown){
           dizzyCooldown=now+3000;
           if(window.__setDizzy)window.__setDizzy(1200);
           spawnDizzyEyes();
