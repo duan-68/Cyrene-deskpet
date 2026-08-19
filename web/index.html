@@ -535,13 +535,11 @@ document.getElementById('layers').addEventListener('click',e=>{
 document.querySelectorAll('#panel .sec > h2').forEach(h=>h.addEventListener('click',()=>h.parentNode.classList.toggle('collapsed')));
 
 let mouse={x:0,y:0,in:false};
-let lastMouseMove=0, wander={ex:0,ey:0};
 window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top+r.height/2;
   mouse.x=clamp((e.clientX-cx)/(r.width/2),-1,1);
   mouse.y=clamp((e.clientY-cy)/(r.height/2),-1,1);
-  mouse.in=true;
-  lastMouseMove=performance.now(); });
+  mouse.in=true; });
 
 // ---------- mic ----------
 let micLevel=0, analyser=null, micBuf=null;
@@ -799,24 +797,15 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    tgt.angleX+=0.20*Math.sin(t*0.42)+0.08*Math.sin(t*1.13);
+    tgt.angleX+=0.2*Math.sin(t*0.42)+0.05*Math.sin(t*1.13);
     tgt.angleY+=0.12*Math.sin(t*0.31+1.7);
-    tgt.angleZ+=0.10*Math.sin(t*0.23+0.5);
-    tgt.body +=0.14*Math.sin(t*0.19+2.1);
-  }
-  // 鼠标 2.5s 不动时，眼睛好奇地随机打量四周
-  if(now-lastMouseMove>2500){
-    wander.ex+=(Math.random()*2-1)*dt*0.12;
-    wander.ey+=(Math.random()*2-1)*dt*0.12;
-    wander.ex=clamp(wander.ex,-0.6,0.6);
-    wander.ey=clamp(wander.ey,-0.6,0.6);
-    tgt.eyeX=clamp(tgt.eyeX+wander.ex,-1,1);
-    tgt.eyeY=clamp(tgt.eyeY+wander.ey,-1,1);
+    tgt.angleZ+=0.1*Math.sin(t*0.23+0.5);
+    tgt.body +=0.15*Math.sin(t*0.19+2.1);
   }
   if(happyUntil>now){
-    tgt.angleX+=0.45*Math.sin(t*6.0);
-    tgt.angleY+=0.20*Math.sin(t*4.0+0.7);
-    tgt.angleZ+=0.35*Math.sin(t*5.0+1.2);
+    tgt.angleX+=0.36*Math.sin(t*6.0);
+    tgt.angleY+=0.15*Math.sin(t*4.0+0.7);
+    tgt.angleZ+=0.28*Math.sin(t*5.0+1.2);
   }
   if(auto.rand&&!camLive){
     if(now>nextRnd){ nextRnd=now+5000+Math.random()*10000;
@@ -868,10 +857,9 @@ function tick(now){
   const headDX=(e.angleX*14+e.angleZ*0.07*(NP.cy-FC.y))*FS;
   for(const L of layers){
     if(!L.spr) continue;
-    const headScale=(L.bn==='front hair' && happyUntil>now)?0.25:1;
     for(const sp of L.spr){
       const wind=auto.idle?(0.9*Math.sin(t*0.8+sp.phase)+0.5*Math.sin(t*1.9+sp.phase*2.3)):0;
-      const txv=headDX*headScale+wind*FS;
+      const txv=headDX+wind*FS;
       let kk=70,cc=9;
       let axv=-kk*(sp.stiff.x-txv)-cc*sp.stiff.v; sp.stiff.v+=axv*dt; sp.stiff.x+=sp.stiff.v*dt;
       sp.stiff.dx=-(sp.stiff.x-txv)*2.2;
@@ -948,7 +936,7 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   background:url(dizzy.png) center/contain no-repeat;
   animation:dizzySpin .7s linear infinite}
 @keyframes dizzySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-.musicNote{position:fixed;z-index:290;width:30px;height:30px;pointer-events:none;
+.musicNote{position:absolute;z-index:290;width:30px;height:30px;pointer-events:none;
   object-fit:contain;filter:drop-shadow(0 0 5px rgba(255,158,207,.9))}
 </style>
 <script>
@@ -1173,15 +1161,12 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
   });
   if(window.petAPI)window.petAPI.onFeed(feed);
 
-  // ---- 周期性晃头晃脑 + 粉色音符 ----
+  // ---- 周期性音符（跟随桌宠） ----
   function spawnMusicNotes(){
-    var r=canvas.getBoundingClientRect();
-    var cx=r.left+r.width/2;
-    var cy=r.top+r.height*0.22;
     var positions=[
-      {x:-149,y:47},{x:-120,y:68},{x:-102,y:0},
-      {x:145,y:50},{x:115,y:76},{x:105,y:5},
-      {x:-48,y:-40},{x:45,y:-33}
+      {x:-149,y:47},{x:-120,y:98},{x:-102,y:0},
+      {x:145,y:50},{x:119,y:104},{x:104,y:5},
+      {x:-45,y:-35},{x:48,y:-44}
     ];
     for(var i=0;i<positions.length;i++){
       (function(i){
@@ -1189,23 +1174,16 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
         n.src='music/note_'+(1+Math.floor(Math.random()*9))+'.png';
         n.className='musicNote';
         var pos=positions[i];
-        n.style.left=(cx+pos.x-15)+'px';
-        n.style.top=(cy+pos.y-15)+'px';
-        console.log('[pet] note i='+i+' pos.y='+pos.y+' top='+n.style.top+' cy='+cy);
+        // 绑定在 holder 内（跟随桌宠移动），holder 中心即桌宠中心
+        n.style.left=(PET_SIZE/2+pos.x-15)+'px';
+        n.style.top=(PET_SIZE*0.22+pos.y-15)+'px';
         n.style.animation='noteFloat 6s ease-in-out '+(i*0.3)+'s both';
-        document.body.appendChild(n);
-        setTimeout(function(){
-          try{
-            var rect=n.getBoundingClientRect();
-            console.log('[pet] note actual top='+rect.top+' left='+rect.left+' setTop='+n.style.top);
-          }catch(err){}
-        },1200);
+        holder.appendChild(n);
         setTimeout(function(){n.remove();},6600);
       })(i);
     }
   }
   function headShake(){
-    if(window.__setHappy)window.__setHappy(2000);
     spawnMusicNotes();
   }
   function scheduleHeadShake(){
