@@ -857,9 +857,10 @@ function tick(now){
   const headDX=(e.angleX*14+e.angleZ*0.07*(NP.cy-FC.y))*FS;
   for(const L of layers){
     if(!L.spr) continue;
+    const headScale=(L.bn==='front hair' && happyUntil>now)?0.25:1;
     for(const sp of L.spr){
       const wind=auto.idle?(0.9*Math.sin(t*0.8+sp.phase)+0.5*Math.sin(t*1.9+sp.phase*2.3)):0;
-      const txv=headDX+wind*FS;
+      const txv=headDX*headScale+wind*FS;
       let kk=70,cc=9;
       let axv=-kk*(sp.stiff.x-txv)-cc*sp.stiff.v; sp.stiff.v+=axv*dt; sp.stiff.x+=sp.stiff.v*dt;
       sp.stiff.dx=-(sp.stiff.x-txv)*2.2;
@@ -1167,9 +1168,9 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
     var cx=r.left+r.width/2;
     var cy=r.top+r.height*0.22;
     var positions=[
-      {x:-130,y:-15},{x:-100,y:22},{x:-118,y:-48},
-      {x:130,y:-15},{x:100,y:22},{x:118,y:-48},
-      {x:-48,y:-98},{x:48,y:-98}
+      {x:-150,y:67},{x:-120,y:58},{x:-110,y:0},
+      {x:146,y:76},{x:123,y:49},{x:105,y:5},
+      {x:-48,y:-40},{x:45,y:-33}
     ];
     for(var i=0;i<positions.length;i++){
       (function(i){
@@ -1179,8 +1180,15 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
         var pos=positions[i];
         n.style.left=(cx+pos.x-15)+'px';
         n.style.top=(cy+pos.y-15)+'px';
+        console.log('[pet] note i='+i+' pos.y='+pos.y+' top='+n.style.top+' cy='+cy);
         n.style.animation='noteFloat 6s ease-in-out '+(i*0.3)+'s both';
         document.body.appendChild(n);
+        setTimeout(function(){
+          try{
+            var rect=n.getBoundingClientRect();
+            console.log('[pet] note actual top='+rect.top+' left='+rect.left+' setTop='+n.style.top);
+          }catch(err){}
+        },1200);
         setTimeout(function(){n.remove();},6600);
       })(i);
     }
