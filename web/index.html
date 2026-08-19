@@ -794,8 +794,8 @@ function tick(now){
     tgt.mouthOpen=Math.max(tgt.mouthOpen,cam.mo);
     tgt.body=clamp(tgt.body+cam.ax*0.25,-1,1);
   }
-  if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(-mouse.y*0.3,-1,1);
-    tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(-mouse.y*2.0,-1,1); }
+  if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
+    tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
     tgt.angleX+=0.13*Math.sin(t*0.42)+0.05*Math.sin(t*1.13);
     tgt.angleY+=0.08*Math.sin(t*0.31+1.7);
