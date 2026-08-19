@@ -817,14 +817,14 @@ function tick(now){
       wanderTarget.ex = (Math.random()*2-1)*0.9;      // 随机目标方向
       wanderTarget.ey = (Math.random()*2-1)*0.9;
     }
-    wander.ex += (wanderTarget.ex - wander.ex) * Math.min(1, dt*0.4);
-    wander.ey += (wanderTarget.ey - wander.ey) * Math.min(1, dt*0.4);
+    wander.ex += (wanderTarget.ex - wander.ex) * Math.min(1, dt*1.2);
+    wander.ey += (wanderTarget.ey - wander.ey) * Math.min(1, dt*1.2);
     tgt.eyeX=wander.ex;
     tgt.eyeY=wander.ey;
   }
   if(auto.idle&&!camLive){
     swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0002;
-    swayV.az=clamp(swayV.az,-0.008,0.008);
+    swayV.az=clamp(swayV.az,-0.005,0.005);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
   }
