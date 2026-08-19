@@ -645,6 +645,7 @@ function vnoise(x){var i=Math.floor(x),f=x-i;f=f*f*(3-2*f);return hash(i)+(hash(
 function pnoise(x){var i=Math.floor(x),f=x-i;var u=f*f*(3-2*f);
   var g0=(hash(i)<0.5?-1:1)*f, g1=(hash(i+1)<0.5?-1:1)*(f-1);
   return (g0+u*(g1-g0))*0.6;}
+var sway={ax:0,ay:0,az:0,bd:0}, swayV={ax:0,ay:0,az:0,bd:0};
 
 function fadeAlpha(L,e){
   if(!L.fade) return 1;
@@ -802,10 +803,18 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    tgt.angleX+=pnoise(t*0.5)*0.60;
-    tgt.angleY+=pnoise(t*0.4+10)*0.43;
-    tgt.angleZ+=pnoise(t*0.45+20)*0.35;
-    tgt.body +=pnoise(t*0.35+30)*0.43;
+    swayV.ax+=(Math.random()*2-1)*0.0004; swayV.ax=clamp(swayV.ax,-0.015,0.015);
+    swayV.ay+=(Math.random()*2-1)*0.0004; swayV.ay=clamp(swayV.ay,-0.015,0.015);
+    swayV.az+=(Math.random()*2-1)*0.0004; swayV.az=clamp(swayV.az,-0.015,0.015);
+    swayV.bd+=(Math.random()*2-1)*0.0004; swayV.bd=clamp(swayV.bd,-0.015,0.015);
+    sway.ax=clamp(sway.ax+swayV.ax,-0.22,0.22);
+    sway.ay=clamp(sway.ay+swayV.ay,-0.16,0.16);
+    sway.az=clamp(sway.az+swayV.az,-0.13,0.13);
+    sway.bd=clamp(sway.bd+swayV.bd,-0.16,0.16);
+    tgt.angleX+=sway.ax;
+    tgt.angleY+=sway.ay;
+    tgt.angleZ+=sway.az;
+    tgt.body +=sway.bd;
   }
   if(happyUntil>now){
     tgt.angleX+=0.36*Math.sin(t*6.0);
