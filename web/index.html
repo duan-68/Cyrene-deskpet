@@ -1166,15 +1166,19 @@ body.pet-mode canvas{position:absolute;margin:0;left:0;top:0;transition:none;poi
     var r=canvas.getBoundingClientRect();
     var cx=r.left+r.width/2;
     var cy=r.top+r.height*0.22;
-    var count=8;
-    for(var i=0;i<count;i++){
+    var positions=[
+      {x:-130,y:-15},{x:-100,y:22},{x:-118,y:-48},
+      {x:130,y:-15},{x:100,y:22},{x:118,y:-48},
+      {x:-48,y:-98},{x:48,y:-98}
+    ];
+    for(var i=0;i<positions.length;i++){
       (function(i){
         var n=document.createElement('img');
         n.src='music/note_'+(1+Math.floor(Math.random()*9))+'.png';
         n.className='musicNote';
-        var ang=i/count*2*Math.PI;
-        n.style.left=(cx+Math.cos(ang)*70-15)+'px';
-        n.style.top=(cy+Math.sin(ang)*45-15)+'px';
+        var pos=positions[i];
+        n.style.left=(cx+pos.x-15)+'px';
+        n.style.top=(cy+pos.y-15)+'px';
         n.style.animation='noteFloat 6s ease-in-out '+(i*0.3)+'s both';
         document.body.appendChild(n);
         setTimeout(function(){n.remove();},6600);
