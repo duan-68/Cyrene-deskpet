@@ -810,10 +810,12 @@ function tick(now){
       tgt.eyeY=clamp(mouse.y*2.0,-1,1);
     }
   }
-  // 鼠标 2.5s 不动，眼睛平滑地随机打量四周
+  // 鼠标 2.5s 不动，眼睛持续平滑地随机打量四周（带回中力，正负对称含向上看）
   if(now-lastMouseMove>2500){
-    wanderV.ex+=(Math.random()*2-1)*0.001; wanderV.ex=clamp(wanderV.ex,-0.05,0.05);
-    wanderV.ey+=(Math.random()*2-1)*0.001; wanderV.ey=clamp(wanderV.ey,-0.05,0.05);
+    wanderV.ex += (-wander.ex*0.003) + (Math.random()*2-1)*0.001;
+    wanderV.ey += (-wander.ey*0.003) + (Math.random()*2-1)*0.001;
+    wanderV.ex=clamp(wanderV.ex,-0.06,0.06);
+    wanderV.ey=clamp(wanderV.ey,-0.06,0.06);
     wander.ex=clamp(wander.ex+wanderV.ex,-1,1);
     wander.ey=clamp(wander.ey+wanderV.ey,-1,1);
     tgt.eyeX=wander.ex;
@@ -821,7 +823,7 @@ function tick(now){
   }
   if(auto.idle&&!camLive){
     swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0003;
-    swayV.az=clamp(swayV.az,-0.015,0.015);
+    swayV.az=clamp(swayV.az,-0.01,0.01);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
   }
