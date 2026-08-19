@@ -802,10 +802,10 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    tgt.angleX+=pnoise(t*0.5)*0.50;
-    tgt.angleY+=pnoise(t*0.4+10)*0.36;
-    tgt.angleZ+=pnoise(t*0.45+20)*0.29;
-    tgt.body +=pnoise(t*0.35+30)*0.36;
+    tgt.angleX+=pnoise(t*0.5)*0.60;
+    tgt.angleY+=pnoise(t*0.4+10)*0.43;
+    tgt.angleZ+=pnoise(t*0.45+20)*0.35;
+    tgt.body +=pnoise(t*0.35+30)*0.43;
   }
   if(happyUntil>now){
     tgt.angleX+=0.36*Math.sin(t*6.0);
