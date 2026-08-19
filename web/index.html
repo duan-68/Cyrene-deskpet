@@ -684,7 +684,7 @@ function deform(L, e){
       if(bn==='irides'){
         const isc=e.irisScale;
         x=EA.icx+(x-EA.icx)*isc; y=EA.icy+(y-EA.icy)*isc;
-        x+=e.eyeX*11*FS; y+=e.eyeY*6*FS;
+        x+=e.eyeX*11*FS; y+=e.eyeY*11*FS;
         const tl=smooth((0.32-vOpen)/0.32);           // iris stays round until nearly closed
         y = EA.closeY + (y-EA.closeY)*(1-0.80*tl);
       } else {
