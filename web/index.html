@@ -794,8 +794,8 @@ function tick(now){
     tgt.mouthOpen=Math.max(tgt.mouthOpen,cam.mo);
     tgt.body=clamp(tgt.body+cam.ax*0.25,-1,1);
   }
-  if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.5,-1,1); tgt.angleY=clamp(-mouse.y*0.4,-1,1);
-    tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(-mouse.y*1.4,-1,1); }
+  if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(-mouse.y*0.3,-1,1);
+    tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(-mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
     tgt.angleX+=0.13*Math.sin(t*0.42)+0.05*Math.sin(t*1.13);
     tgt.angleY+=0.08*Math.sin(t*0.31+1.7);
@@ -858,7 +858,7 @@ function tick(now){
   for(const L of layers){
     if(!L.spr) continue;
     for(const sp of L.spr){
-      const wind=auto.idle?(1.8*Math.sin(t*0.8+sp.phase)+1.0*Math.sin(t*1.9+sp.phase*2.3)):0;
+      const wind=auto.idle?(0.9*Math.sin(t*0.8+sp.phase)+0.5*Math.sin(t*1.9+sp.phase*2.3)):0;
       const txv=headDX+wind*FS;
       let kk=70,cc=9;
       let axv=-kk*(sp.stiff.x-txv)-cc*sp.stiff.v; sp.stiff.v+=axv*dt; sp.stiff.x+=sp.stiff.v*dt;
