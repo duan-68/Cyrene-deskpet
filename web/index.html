@@ -662,7 +662,7 @@ function fadeAlpha(L,e){
 function deform(L, e){
   const b=L.base, o=L.cur, n=b.length;
   const isHead=L.group==='head';
-  const az=e.angleZ*0.436, cz=Math.cos(az), sz=Math.sin(az);  // ±25度扇形转动
+  const az=e.angleZ*0.209, cz=Math.cos(az), sz=Math.sin(az);  // ±12度扇形转动
   const ab=e.body*0.028, cb=Math.cos(ab), sb=Math.sin(ab);
   const nm=L.name, bn=L.bn;
   const eyeSide=L.side, EA=eyeSide==='L'?A.eyeL:(eyeSide==='R'?A.eyeR:null);
@@ -803,7 +803,8 @@ function tick(now){
   if(!camLive&&auto.mouse&&mouse.in){ tgt.angleX=clamp(mouse.x*0.3,-1,1); tgt.angleY=clamp(mouse.y*0.3,-1,1);
     tgt.eyeX=clamp(mouse.x*1.8,-1,1); tgt.eyeY=clamp(mouse.y*2.0,-1,1); }
   if(auto.idle&&!camLive){
-    swayV.az+=(Math.random()*2-1)*0.0004; swayV.az=clamp(swayV.az,-0.015,0.015);
+    swayV.az += (-sway.az*0.002) + (Math.random()*2-1)*0.0006;
+    swayV.az=clamp(swayV.az,-0.02,0.02);
     sway.az=clamp(sway.az+swayV.az,-1,1);
     tgt.angleZ+=sway.az;
   }
