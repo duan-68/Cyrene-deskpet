@@ -824,7 +824,7 @@ function tick(now){
     tgt.mouthOpen=Math.max(tgt.mouthOpen,talkV);
   }
   if(auto.blink){
-    if(blinkT<0 && now>nextBlink){ blinkT=0; nextBlink=now+1600+Math.random()*3800; if(Math.random()<0.18)nextBlink=now+280; }
+    if(blinkT<0 && now>nextBlink){ blinkT=0; nextBlink=now+3200+Math.random()*7600; if(Math.random()<0.18)nextBlink=now+560; }
     if(blinkT>=0){ blinkT+=dt;
       const d=blinkT; let v;
       if(d<0.08)v=1-d/0.08; else if(d<0.42)v=0; else if(d<0.58)v=(d-0.42)/0.16; else{v=1;blinkT=-1;}
