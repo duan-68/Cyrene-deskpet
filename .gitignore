@@ -8,3 +8,6 @@ electron/backend_dist/
 electron/backend_build/
 backend_server.spec
 pet/backend_server.exe
+electron/userdata/
+electron/debug.log
+electron/build.log

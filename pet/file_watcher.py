@@ -14,8 +14,8 @@ class DesktopDeleteHandler(FileSystemEventHandler):
         self._on_delete = on_delete
 
     def _handle(self, src_path, mode):
-        if src_path.lower().endswith(".lnk"):
-            self._on_delete(os.path.basename(src_path), mode)
+        # 监控所有文件类型（不只是 .lnk）
+        self._on_delete(os.path.basename(src_path), mode)
 
     def on_deleted(self, event):
         if not event.is_directory:

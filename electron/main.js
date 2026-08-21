@@ -6,6 +6,9 @@ const fs = require('fs');
 const RES_DIR = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
 const WEB_DIR = path.join(RES_DIR, 'web');
 
+// 将用户数据（缓存等）目录设到项目内，避免沙箱下写系统用户目录被拒
+app.setPath('userData', path.join(__dirname, 'userdata'));
+
 ipcMain.handle('get-sample-psd', () => {
   return fs.readFileSync(path.join(WEB_DIR, 'pet.psd'));
 });
@@ -98,6 +101,10 @@ function createWindow() {
   });
   win.on('closed', () => clearInterval(keepTop));
   win.webContents.on('console-message', (event) => {
+    try {
+      fs.appendFileSync(path.join(__dirname, 'debug.log'),
+        '[renderer] ' + event.message + '\n');
+    } catch (_) {}
     console.log('[renderer]', event.message);
   });
   win.webContents.on('did-finish-load', () => {

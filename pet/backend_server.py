@@ -21,22 +21,34 @@ class Backend:
         self._icon_cache = {}   # {filename: icon_b64}
         self.loop = None
 
+    def _resolve_name(self, display_name, entries, stem_map):
+        # 桌面图标显示名 -> 真实文件名（支持文件夹/普通文件/.lnk）
+        if display_name in entries:
+            return display_name
+        if (display_name + ".lnk") in entries:
+            return display_name + ".lnk"
+        # 隐藏扩展名：foo.txt 显示为 foo
+        return stem_map.get(display_name)
+
     def refresh_snapshot(self):
         hwnd = find_desktop_listview()
         if not hwnd:
             return
         items = enum_icon_positions(hwnd)
+        entries = {p.name for p in DESKTOP.iterdir()}
+        stem_map = {}
+        for p in DESKTOP.iterdir():
+            stem_map.setdefault(p.stem, p.name)
         snap = {}
         for name, x, y in items:
-            filename = name + ".lnk"
-            lnk = DESKTOP / filename
-            if not lnk.exists():
+            real = self._resolve_name(name, entries, stem_map)
+            if real is None:
                 continue
-            icon = self._icon_cache.get(filename)
+            icon = self._icon_cache.get(real)
             if icon is None:
-                icon = extract_icon_png_b64(str(lnk))
-                self._icon_cache[filename] = icon
-            snap[filename] = (x, y, icon)
+                icon = extract_icon_png_b64(str(DESKTOP / real))
+                self._icon_cache[real] = icon
+            snap[real] = (x, y, icon)
         self.snapshot = snap
 
     def on_delete(self, filename, mode):
