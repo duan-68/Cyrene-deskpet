@@ -107,4 +107,4 @@ npx electron-builder
 
 ## 📄 版权说明
 
-昔涟为《崩坏：星穹铁道》游戏角色，项目所用桌宠图片来自B站视频截图，视频链接[https://www.bilibili.com/video/BV1FPydBPEfC/?spm_id_from=333.337.search-card.all.click]。本项目素材仅供个人自用学习，不涉及商业分发。
+昔涟为《崩坏：星穹铁道》游戏角色，项目所用桌宠图片来自B站视频截图，视频链接[https://www.bilibili.com/video/BV1FPydBPEfC/?spm_id_from=333.337.search-card.all.click]()。本项目素材仅供个人自用学习，不涉及商业分发。
