@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+build/
+electron/backend_dist/
+electron/backend_build/
+backend_server.spec
+pet/backend_server.exe
+electron/userdata/
+electron/debug.log
+electron/build.log
